@@ -133,3 +133,111 @@ TransportResult TransportRemoveLine(TransportDB* tdb, int line_id)
 }
 
 
+allLines *find_line(TransportDB* tdb, int line_id)
+{
+    if (tdb == NULL) 
+    {
+        return NULL;
+    }
+
+    Line *curr = tdb->head;
+
+    while (curr != NULL) 
+    {
+        if (curr->line_id == line_id)
+        {
+            return curr; 
+        } 
+        curr = curr->next;
+    }
+    return NULL;
+
+}
+
+
+TransportResult TransportAddStation(TransportDB* tdb, int line_id, const char *new_station_name) 
+{
+    if (tdb == NULL || new_station_name == NULL) 
+    {  
+        return TRANSPORT_NULL_ARGUMENTS;
+    }
+
+    if (line_id <= 0) 
+    {
+        return TRANSPORT_INVALID_LINE_NUMBER;
+    }
+
+    allLines *request_line = find_line(tdb, line_id);
+
+    if (request_line == NULL) 
+    {
+        return TRANSPORT_DOESNT_EXIST;
+    }
+
+    StationsList *new_station;
+
+    new_station = (StationsList*)malloc(sizeof(StationsList));
+    if (new_station == NULL)
+    {
+        return TRANSPORT_OUT_OF_MEMORY;
+    }
+
+    new_station->stationsName = (char*)malloc(sizeof(char) * (strlen(new_station_name) + 1));
+    if (new_station->stationsName  == NULL)
+    {
+        free(new_station);
+        return TRANSPORT_OUT_OF_MEMORY;
+    }
+
+    StationsList *curr_sta = request_line->stations;
+
+    strcpy(new_station->stationsName, new_station_name);
+    new_station->nextStation = NULL;
+
+    if (request_line->stations == NULL) 
+    {
+        request_line->stations = new_station;
+
+        return TRANSPORT_SUCCESS;
+    }
+
+    while (curr_sta != NULL)
+    {
+        if (curr_sta->nextStation == NULL)
+        {
+            curr_sta->nextStation = new_station;
+            
+            return TRANSPORT_SUCCESS;
+        }
+        
+        curr_sta = curr_sta->nextStation;
+    }
+
+    return TRANSPORT_SUCCESS;
+}
+
+
+void TransportRemoveStation(TransportDB* tdb, int line_id, unsigned int index)
+{
+    
+}
+
+
+void TransportReportLines(TransportDB* tdb, const char *station) 
+{
+
+}
+
+
+void TransportReportStations(TransportDB* tdb, int line_id) 
+{
+
+
+}
+
+
+void TransportReportDirections(TransportDB* tdb, const char *from, const char *to) 
+{
+
+
+}
