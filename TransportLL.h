@@ -1,34 +1,18 @@
 #ifndef __MOOVITLIST__
 #define __MOOVITLIST__
+
 #include "prog2_ex2.h"
 
-typedef enum {
-    CMD_ADD_LINE,
-    CMD_REMOVE_LINE,
-    CMD_ADD_STATION_TO_LINE,
-    CMD_REPORT_LINES,
-    CMD_REPORT_STATIONS,
-    CMD_REPORT_DIRECTIONS,
-    CMD_COMMENT,
-    CMD_UNKNOWN
-} CommandType;
+typedef struct TransportDB_t TransportDB;
 
-
-typedef struct lineDetails_t
-{
-    int line_id;
-    float price;
-    transport_type type;
-    int num_of_stations;
-    char *stations_list;
-    struct lineDetails_t *next;
-    
-}lineDetails;
-
-void configure_io_from_args(int argc, char *argv[] ,FILE **in ,FILE **out);
-CommandType identify_command(char *tokens[], int count);
-lineDetails *add_line(char *tokens[], int count, lineDetails *allLines);
-void remove_line(char *tokens[], int count, lineDetails *allLines);
-void add_station_to_line(char *tokens[], int count, lineDetails *allLines);
+TransportDB *TransportCreate(void);
+void TransportDestroy(TransportDB *tdb);
+TransportResult TransportAddLine(TransportDB* tdb, const char *type, int line_id, float price);
+TransportResult TransportRemoveLine(TransportDB* tdb, int line_id);
+TransportResult TransportAddStation(TransportDB* tdb, int line_id, const char *station);
+TransportResult TransportRemoveStation(TransportDB* tdb, int line_id, unsigned int index);
+TransportResult TransportReportLines(TransportDB* tdb, const char *type);
+TransportResult TransportReportStations(TransportDB* tdb, int line_id);
+TransportResult TransportReportDirections(TransportDB* tdb, const char *from, const char *to);
 
 #endif
