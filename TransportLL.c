@@ -7,14 +7,21 @@
 
 TransportDB *TransportCreate(void)
 {
-
+   TransportDB *tdb = (TransportDB*)malloc(sizeof(TransportDB));
+   if(tdb==NULL)
+   {
+    return NULL;
+   }
 
 }
 
 
 void TransportDestroy(TransportDB *tdb)
 {
-
+    while(tdb->next!=NULL)
+    {
+        free(tdb)
+    }
 }
 
 

@@ -2,17 +2,23 @@
 #define __MOOVITLIST__
 #include "prog2_ex2.h"
 
+typedef struct StationsList_t
+{
+    char *stations_list;
+    struct StationsList_t *next;
+}StationsList;
+
 
 typedef struct TransportDB_t
 {
     int line_id;
     float price;
     TransportType type;
-    int num_of_stations;
-    char *stations_list;
+    StationsList stations;
     struct TransportDB_t *next;
     
 }TransportDB;
+
 
 TransportDB *TransportCreate(void);
 void TransportDestroy(TransportDB *tdb);
