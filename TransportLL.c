@@ -42,6 +42,7 @@ void remove_line(char *tokens[], int count, Line *allLines);
 void add_station_to_line(char *tokens[], int count, Line *allLines);
 
 Line *find_line(TransportDB* tdb, int line_id);
+void sort_list(TransportDB* tdb);
 
 TransportDB *TransportCreate(void)
 {
@@ -157,7 +158,7 @@ Line *find_line(TransportDB* tdb, int line_id)
         curr = curr->next;
     }
     return NULL;
-    
+
 }
 
 
@@ -300,10 +301,135 @@ TransportResult TransportRemoveStation(TransportDB* tdb, int line_id, unsigned i
 }
 
 
-
-TransportResult TransportReportLines(TransportDB* tdb, const char *station) 
+void sort_list(TransportDB* tdb) 
 {
+    if (tdb == NULL || tdb->head == NULL) 
+    {
+        return;
+    }
 
+    Line *curr_line = tdb->head;
+    Line *cmp_line = tdb->head->next;
+    Line temp_line;
+
+    while (curr_line != NULL)
+    {
+        cmp_line = curr_line->next;
+        
+        while (cmp_line != NULL)
+        {
+            if (cmp_line->line_id < curr_line->line_id)
+            {
+                temp_line.line_id = curr_line->line_id;
+                curr_line->line_id = cmp_line->line_id;
+                cmp_line->line_id = temp_line.line_id;
+
+                temp_line.price = curr_line->price;
+                curr_line->price = cmp_line->price;
+                cmp_line->price = temp_line.price;
+
+                temp_line.type = curr_line->type;
+                curr_line->type = cmp_line->type;
+                cmp_line->type = temp_line.type;
+
+                temp_line.stations = curr_line->stations;
+                curr_line->stations = cmp_line->stations;
+                cmp_line->stations = temp_line.stations;
+
+            }
+
+            cmp_line = cmp_line->next;
+        }
+        curr_line = curr_line->next;
+    }
+
+    return;
+}
+
+TransportResult TransportReportLines(TransportDB* tdb, const char *type) 
+{
+    if (tdb == NULL || type == NULL)
+    {
+        return TRANSPORT_NULL_ARGUMENTS;
+    }
+
+    TransportType requested_type;
+
+    if (strcmp(type, "BUS") == 0) {
+        requested_type = BUS;
+    } 
+    else if (strcmp(type, "METRO") == 0) {
+        requested_type = METRO;
+    } 
+    else if (strcmp(type, "TRAIN") == 0) {
+        requested_type = TRAIN;
+    } 
+    else if (strcmp(type, "ALL") == 0) {
+        requested_type = ALL;
+    } 
+    else {
+        return TRANSPORT_INVALID_LINE_TYPE;
+    }
+
+    if (tdb->head == NULL) 
+    {
+        return TRANSPORT_EMPTY;
+    }
+    
+    sort_list(tdb);
+    
+    Line *curr_line = tdb->head;
+    StationsList *curr_station = curr_line->stations;
+
+    int num_stations = 0;
+    int found = 0;
+
+    if (requested_type == ALL) 
+    {
+        while (curr_line != NULL)
+        {
+            curr_station = curr_line->stations;
+
+            while (curr_station != NULL)
+            {
+                curr_station = curr_station->next;
+                num_stations++;
+            }
+        
+            prog2_report_line(curr_line->line_id, curr_line->type, num_stations, curr_line->price);
+            curr_line = curr_line->next;
+            num_stations = 0;
+        }
+
+        return TRANSPORT_SUCCESS;
+    }
+            
+    else 
+    {
+        while (curr_line != NULL)
+        {
+            curr_station = curr_line->stations;
+
+            if (requested_type == curr_line->type)
+            {
+                while (curr_station != NULL)
+                {
+                    curr_station = curr_station->next;
+                    num_stations++;
+                }   
+                prog2_report_line(curr_line->line_id, curr_line->type, num_stations, curr_line->price);
+                found++;
+                num_stations = 0;
+            }   
+            curr_line = curr_line->next;
+        }
+
+        if (found == 0)
+        {
+            return TRANSPORT_EMPTY;
+        }
+        return TRANSPORT_SUCCESS;        
+    }
 }
 
 
