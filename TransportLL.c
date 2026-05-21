@@ -42,7 +42,8 @@ void remove_line(char *tokens[], int count, Line *allLines);
 void add_station_to_line(char *tokens[], int count, Line *allLines);
 
 Line *find_line(TransportDB* tdb, int line_id);
-void sort_list(TransportDB* tdb);
+void sort_by_id(TransportDB* tdb);
+void sort_by_price(TransportDB* tdb);
 
 TransportDB *TransportCreate(void)
 {
@@ -301,7 +302,7 @@ TransportResult TransportRemoveStation(TransportDB* tdb, int line_id, unsigned i
 }
 
 
-void sort_list(TransportDB* tdb) 
+void sort_by_id(TransportDB* tdb) 
 {
     if (tdb == NULL || tdb->head == NULL) 
     {
@@ -376,7 +377,7 @@ TransportResult TransportReportLines(TransportDB* tdb, const char *type)
         return TRANSPORT_EMPTY;
     }
     
-    sort_list(tdb);
+    sort_by_id(tdb);
     
     Line *curr_line = tdb->head;
     StationsList *curr_station = curr_line->stations;
@@ -432,11 +433,82 @@ TransportResult TransportReportLines(TransportDB* tdb, const char *type)
     }
 }
 
+void sort_by_price(TransportDB* tdb) 
+{
+    int lowest_price = 0;
+
+    if (tdb == NULL || tdb->head == NULL) 
+    {
+        return;
+    }
+
+    Line *curr_line = tdb->head;
+    Line *cmp_line = tdb->head->next;
+    Line temp_line;
+
+    while (curr_line != NULL)
+    {
+        cmp_line = curr_line->next;
+        
+        while (cmp_line != NULL)
+        {
+
+}
 
 TransportResult TransportReportStations(TransportDB* tdb, int line_id) 
 {
+    if (tdb == NULL)
+    {
+        return TRANSPORT_NULL_ARGUMENTS;
+    }
 
+    if (line_id <= 0)
+    {
+        return TRANSPORT_INVALID_LINE_NUMBER;
+    }
 
+    if (tdb->head == NULL) 
+    {
+        return TRANSPORT_DOESNT_EXIST;
+    }
+
+    Line *curr_line = tdb->head;
+    StationsList *curr_sta;
+    int num_stations = 0;
+    
+    while (curr_line != NULL)
+    {
+        if (curr_line->line_id == line_id)
+        {
+            curr_sta = curr_line->stations;
+
+            if (curr_sta == NULL)
+            {
+                return TRANSPORT_EMPTY;
+            }
+
+            while (curr_sta != NULL)
+            {
+                num_stations++;
+                curr_sta = curr_sta->next;
+            }
+            
+            curr_sta = curr_line->stations;
+
+            prog2_report_line(curr_line->line_id, curr_line->type, num_stations, curr_line->price);
+
+            while (curr_sta != NULL)
+            {
+                prog2_report_station(curr_sta->station_name);
+                curr_sta = curr_sta->next;
+            }
+
+            return TRANSPORT_SUCCESS;
+        }
+
+        curr_line = curr_line->next;
+    }
+    return TRANSPORT_DOESNT_EXIST;
 }
 
 
