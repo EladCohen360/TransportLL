@@ -8,10 +8,9 @@
 TransportDB *TransportCreate(void)
 {
 TransportDB *tdb = (TransportDB*)malloc(sizeof(TransportDB));
-
     if(tdb==NULL)
         return NULL;
-    
+    tdb->Lines = NULL;
     return tdb;
 }
 
@@ -42,6 +41,19 @@ void TransportDestroy(TransportDB *tdb)
     }
     return;
     
+}
+
+
+void clear_stations(allLines *curr)
+{
+     while (curr->stations!= NULL)
+            {
+                StationsList *next_station = curr->stations->nextStation;
+                free(curr->stations->stationsName);
+                free(curr->stations);
+                curr->stations = next_station;
+            } 
+
 }
 
 
@@ -84,6 +96,8 @@ TransportResult is_id_valid(allLines *current_line ,allLines *new_line, int line
             free(new_line);
             return TRANSPORT_INVALID_LINE_NUMBER;
         }
+    
+    return TRANSPORT_SUCCESS;
 }
 
 
@@ -95,6 +109,7 @@ TransportResult is_price_valid(allLines *new_line, float price)
         return TRANSPORT_INVALID_PRICE;
     }
     new_line->price=price;
+    return TRANSPORT_SUCCESS;
 }
 
 
@@ -106,18 +121,24 @@ TransportResult TransportAddLine(TransportDB* tdb, const char *type, int line_id
     allLines *new_line=(allLines *)malloc(sizeof(allLines));
     if(new_line==NULL)
         return TRANSPORT_OUT_OF_MEMORY;
+    
+    new_line->stations = NULL;
 
-    if(is_type_valid(new_line, type)==TRANSPORT_INVALID_LINE_TYPE)
+    TransportResult res = is_type_valid(new_line, type);
+    if(res==TRANSPORT_INVALID_LINE_TYPE)
         return TRANSPORT_INVALID_LINE_TYPE;
 
     allLines *current_line = tdb->Lines;
-    if(is_id_valid(current_line, new_line, line_id)!=TRANSPORT_ALREADY_EXISTS)
-        return  TRANSPORT_ALREADY_EXISTS;
-    if(is_id_valid(current_line, new_line, line_id)!=TRANSPORT_INVALID_LINE_NUMBER)
-        return  TRANSPORT_INVALID_LINE_NUMBER;
+
+
+    res = is_id_valid(current_line, new_line, line_id);
+    if (res != TRANSPORT_SUCCESS)
+        return res;
+
      new_line->line_id=line_id;
 
-    if(is_price_valid(new_line, price)==TRANSPORT_INVALID_PRICE)
+    res = is_price_valid(new_line, price);
+    if(res==TRANSPORT_INVALID_PRICE)
         return TRANSPORT_INVALID_PRICE;
 
     new_line->nextLine = tdb->Lines;
@@ -129,6 +150,33 @@ TransportResult TransportAddLine(TransportDB* tdb, const char *type, int line_id
 
 TransportResult TransportRemoveLine(TransportDB* tdb, int line_id)
 {
+    if(tdb ==NULL || tdb->Lines == NULL)
+        return TRANSPORT_EMPTY;
+
+    allLines *curr = tdb->Lines->nextLine;
+    allLines *prev = tdb->Lines;
+    if (prev->line_id == line_id)
+    {
+        clear_stations(prev);
+        tdb->Lines = tdb->Lines->nextLine;
+        free(prev);
+        return TRANSPORT_SUCCESS;
+    }
+
+    while (curr!=NULL)
+    {
+        if(curr->line_id==line_id)
+        {
+            clear_stations(curr);
+            prev->nextLine = curr->nextLine;
+            free(curr);
+            return TRANSPORT_SUCCESS;
+        }
+
+        prev = curr;
+        curr = curr->nextLine;
+    }
+    return TRANSPORT_DOESNT_EXIST;
     
 }
 
@@ -140,15 +188,23 @@ allLines *find_line(TransportDB* tdb, int line_id)
         return NULL;
     }
 
-    Line *curr = tdb->head;
+    allLines *curr = tdb->Lines;
 
-    while (curr != NULL) 
+    if(curr != NULL)
     {
         if (curr->line_id == line_id)
         {
             return curr; 
         } 
-        curr = curr->next;
+    }
+
+    while (curr != NULL) 
+    {
+        if (curr->nextLine->line_id == line_id)
+        {
+            return curr; 
+        } 
+        curr = curr->nextLine;
     }
     return NULL;
 

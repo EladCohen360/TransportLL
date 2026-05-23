@@ -1,0 +1,71 @@
+  Bus Line        1 [   4 stations] 5.00$
+  Bus Line        2 [   3 stations] 5.00$
+  Bus Line        4 [   3 stations] 6.00$
+  Bus Line        5 [   3 stations] 4.50$
+  Bus Line        6 [   3 stations] 5.00$
+  Bus Line        7 [   3 stations] 5.00$
+  Bus Line        8 [   3 stations] 7.00$
+  Bus Line        9 [   3 stations] 5.50$
+  Bus Line       10 [   3 stations] 6.00$
+  Bus Line      300 [   3 stations] 5.50$
+Metro Line      201 [   5 stations] 10.00$
+Metro Line      202 [   2 stations] 10.00$
+Metro Line      203 [   5 stations] 12.00$
+Metro Line      204 [   0 stations] 10.00$
+Metro Line      205 [   0 stations] 15.00$
+  Bus Line        1 [   4 stations] 5.00$
+	Station: Tel Aviv
+	Station: Ramat Gan
+	Station: Bnei Brak
+	Station: Petah Tikva
+Train Line      101 [   3 stations] 20.00$
+	Station: Tel Aviv
+	Station: Haifa
+	Station: Nahariya
+Metro Line      201 [   5 stations] 10.00$
+	Station: Petah Tikva
+	Station: Bnei Brak
+	Station: Ramat Gan
+	Station: Tel Aviv
+	Station: Bat Yam
+  Bus Line      300 [   3 stations] 5.50$
+	Station: Jerusalem
+	Station: Mevaseret Zion
+	Station: Tel Aviv
+Train Line      102 [   4 stations] 22.50$
+	Station: Jerusalem
+	Station: Ben Gurion Airport
+	Station: Tel Aviv
+	Station: Herzliya
+Train Line      101 [   3 stations] 20.00$
+	Station: Tel Aviv
+	Station: Nahariya
+  Bus Line      300 [   3 stations] 5.50$
+	Station: Jerusalem
+	Station: Tel Aviv
+Train Line      102 [   4 stations] 22.50$
+	Station: Jerusalem
+	Station: Herzliya
+Metro Line      201 [   5 stations] 10.00$
+	Station: Petah Tikva
+	Station: Bat Yam
+Train Line      103 [   3 stations] 25.00$
+	Station: Beer Sheva
+	Station: Tel Aviv
+  Bus Line        2 [   3 stations] 5.00$
+  Bus Line        4 [   3 stations] 6.00$
+  Bus Line        5 [   3 stations] 4.50$
+  Bus Line        6 [   3 stations] 5.00$
+  Bus Line        7 [   3 stations] 5.00$
+  Bus Line        8 [   3 stations] 7.00$
+  Bus Line        9 [   3 stations] 5.50$
+  Bus Line       10 [   3 stations] 6.00$
+Train Line      102 [   4 stations] 22.50$
+Train Line      103 [   3 stations] 25.00$
+Train Line      104 [   0 stations] 30.00$
+Train Line      105 [   0 stations] 15.00$
+Metro Line      202 [   2 stations] 10.00$
+Metro Line      203 [   5 stations] 12.00$
+Metro Line      204 [   0 stations] 10.00$
+Metro Line      205 [   0 stations] 15.00$
+  Bus Line      300 [   3 stations] 5.50$

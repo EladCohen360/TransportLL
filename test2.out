@@ -1,0 +1,100 @@
+Metro Line        1 [   4 stations] 12.00$
+Metro Line        2 [   3 stations] 12.00$
+Metro Line        3 [   3 stations] 12.00$
+Metro Line        4 [   0 stations] 15.00$
+  Bus Line        8 [   3 stations] 4.50$
+  Bus Line       15 [   2 stations] 6.00$
+  Bus Line       29 [   4 stations] 5.50$
+Train Line       50 [   5 stations] 18.00$
+Train Line       51 [   5 stations] 35.50$
+Train Line       52 [   4 stations] 40.00$
+Train Line       53 [   0 stations] 20.00$
+  Bus Line      149 [   3 stations] 8.00$
+  Bus Line      601 [   3 stations] 9.00$
+  Bus Line      605 [   2 stations] 9.00$
+  Bus Line      947 [   4 stations] 24.50$
+  Bus Line        8 [   3 stations] 4.50$
+  Bus Line       15 [   2 stations] 6.00$
+  Bus Line       29 [   4 stations] 5.50$
+  Bus Line      149 [   3 stations] 8.00$
+  Bus Line      601 [   3 stations] 9.00$
+  Bus Line      605 [   2 stations] 9.00$
+  Bus Line      947 [   4 stations] 24.50$
+Train Line       50 [   5 stations] 18.00$
+Train Line       51 [   5 stations] 35.50$
+Train Line       52 [   4 stations] 40.00$
+Train Line       53 [   0 stations] 20.00$
+Metro Line        1 [   4 stations] 12.00$
+Metro Line        2 [   3 stations] 12.00$
+Metro Line        3 [   3 stations] 12.00$
+Metro Line        4 [   0 stations] 15.00$
+  Bus Line      601 [   3 stations] 9.00$
+	Station: Netanya
+	Station: Herzliya
+	Station: Tel Aviv
+  Bus Line       29 [   4 stations] 5.50$
+	Station: Netanya
+	Station: Ra'anana
+	Station: Kfar Saba
+	Station: Herzliya
+  Bus Line      947 [   4 stations] 24.50$
+	Station: Haifa
+	Station: Netanya
+	Station: Ra'anana
+	Station: Jerusalem
+Train Line       50 [   5 stations] 18.00$
+	Station: Binyamina
+	Station: Hadera
+	Station: Netanya
+	Station: Herzliya
+	Station: Tel Aviv
+Train Line       51 [   5 stations] 35.50$
+	Station: Nahariya
+	Station: Acre
+	Station: Haifa
+	Station: Tel Aviv
+	Station: Modi'in
+Metro Line        1 [   4 stations] 12.00$
+	Station: Petah Tikva
+	Station: Bnei Brak
+	Station: Ramat Gan
+	Station: Tel Aviv
+Metro Line        2 [   3 stations] 12.00$
+	Station: Holon
+	Station: Tel Aviv
+	Station: Herzliya
+  Bus Line      605 [   2 stations] 9.00$
+	Station: Netanya
+	Station: Tel Aviv
+  Bus Line      601 [   3 stations] 9.00$
+	Station: Netanya
+	Station: Tel Aviv
+Train Line       50 [   5 stations] 18.00$
+	Station: Binyamina
+	Station: Tel Aviv
+Train Line       51 [   5 stations] 35.50$
+	Station: Nahariya
+	Station: Modi'in
+Train Line       52 [   4 stations] 40.00$
+	Station: Carmiel
+	Station: Beer Sheva
+Metro Line        1 [   4 stations] 12.00$
+	Station: Petah Tikva
+	Station: Tel Aviv
+  Bus Line      947 [   4 stations] 24.50$
+	Station: Haifa
+	Station: Jerusalem
+Train Line       50 [   5 stations] 18.00$
+	Station: Binyamina
+	Station: Tel Aviv
+Metro Line        2 [   3 stations] 12.00$
+Metro Line        3 [   3 stations] 12.00$
+Metro Line        4 [   0 stations] 15.00$
+  Bus Line        8 [   3 stations] 4.50$
+  Bus Line       15 [   2 stations] 6.00$
+  Bus Line       29 [   4 stations] 5.50$
+Train Line       51 [   5 stations] 35.50$
+Train Line       52 [   4 stations] 40.00$
+Train Line       53 [   0 stations] 20.00$
+  Bus Line      149 [   3 stations] 8.00$
+  Bus Line      947 [   4 stations] 24.50$
