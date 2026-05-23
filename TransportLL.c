@@ -433,28 +433,6 @@ TransportResult TransportReportLines(TransportDB* tdb, const char *type)
     }
 }
 
-void sort_by_price(TransportDB* tdb) 
-{
-    int lowest_price = 0;
-
-    if (tdb == NULL || tdb->head == NULL) 
-    {
-        return;
-    }
-
-    Line *curr_line = tdb->head;
-    Line *cmp_line = tdb->head->next;
-    Line temp_line;
-
-    while (curr_line != NULL)
-    {
-        cmp_line = curr_line->next;
-        
-        while (cmp_line != NULL)
-        {
-
-}
-
 TransportResult TransportReportStations(TransportDB* tdb, int line_id) 
 {
     if (tdb == NULL)
@@ -512,9 +490,122 @@ TransportResult TransportReportStations(TransportDB* tdb, int line_id)
 }
 
 
+void sort_by_price(TransportDB* tdb) 
+{
+    if (tdb == NULL || tdb->head == NULL) 
+    {
+        return;
+    }
+
+    Line *curr_line = tdb->head;
+    Line *cmp_line;
+    Line temp_line;
+
+    while (curr_line != NULL)
+    {
+        cmp_line = curr_line->next;
+        
+        while (cmp_line != NULL)
+        {
+            if (cmp_line->price < curr_line->price)
+            {
+
+                temp_line.line_id = curr_line->line_id;
+                curr_line->line_id = cmp_line->line_id;
+                cmp_line->line_id = temp_line.line_id;
+
+                temp_line.price = curr_line->price;
+                curr_line->price = cmp_line->price;
+                cmp_line->price = temp_line.price;
+
+                temp_line.type = curr_line->type;
+                curr_line->type = cmp_line->type;
+                cmp_line->type = temp_line.type;
+
+                temp_line.stations = curr_line->stations;
+                curr_line->stations = cmp_line->stations;
+                cmp_line->stations = temp_line.stations;
+
+            }
+
+            cmp_line = cmp_line->next;
+        }
+        curr_line = curr_line->next;
+    }
+
+    return;
+}
+
 TransportResult TransportReportDirections(TransportDB* tdb, const char *from, const char *to) 
 {
+    if (tdb == NULL || from == NULL || to == NULL)
+    {
+        return TRANSPORT_NULL_ARGUMENTS;
+    }
 
+    if (tdb->head == NULL)
+    {
+        return TRANSPORT_EMPTY;
+    }
 
+    sort_by_price(tdb);
+
+    Line *curr_line = tdb->head;
+    StationsList *curr_sta;
+    StationsList *after_from_sta;
+    StationsList *count_sta;
+    int num_stations = 0;
+    int count = 0;
+    int found_this_line = 0;
+
+    while (curr_line != NULL)
+    {
+        found_this_line = 0;
+        curr_sta = curr_line->stations;
+        if (curr_sta == NULL)
+        {
+            curr_line = curr_line->next;
+            continue;
+        }
+
+        while (curr_sta != NULL && found_this_line == 0)
+        {
+            if (strcmp(curr_sta->station_name, from) == 0)
+            {
+                after_from_sta = curr_sta;
+
+                while (after_from_sta != NULL && found_this_line == 0)
+                {
+                    if (strcmp(after_from_sta->station_name, to) == 0)
+                    {
+                        count_sta = curr_line->stations;
+                        num_stations = 0;
+
+                        while (count_sta != NULL)
+                        {
+                            num_stations++;
+                            count_sta = count_sta->next;
+                        }                     
+
+                        prog2_report_line(curr_line->line_id, curr_line->type, num_stations, curr_line->price);
+                        prog2_report_station(from);
+                        prog2_report_station(to);
+
+                        count++;
+                        found_this_line = 1;
+                    }
+                    after_from_sta = after_from_sta->next;
+                }
+            }
+            curr_sta = curr_sta->next;
+        }
+        curr_line = curr_line->next;
+    }
+
+    if (count > 0)
+    {
+        return TRANSPORT_SUCCESS;
+    }
+    return TRANSPORT_DOESNT_EXIST;
 }
 
