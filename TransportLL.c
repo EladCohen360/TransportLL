@@ -15,8 +15,7 @@ typedef struct Line_t
     float price;
     TransportType type;
     StationsList *stations;
-    struct Line_t *next;
-    
+    struct Line_t *next;  
 } Line;
 
 struct TransportDB_t
@@ -37,107 +36,198 @@ typedef enum {
 
 void configure_io_from_args(int argc, char *argv[] ,FILE **in ,FILE **out);
 CommandType identify_command(char *tokens[], int count);
-Line *add_line(char *tokens[], int count, Line *allLines);
-void remove_line(char *tokens[], int count, Line *allLines);
-void add_station_to_line(char *tokens[], int count, Line *allLines);
+Line *add_line(char *tokens[], int count, Line *Line);
+void remove_line(char *tokens[], int count, Line *Line);
+void add_station_to_line(char *tokens[], int count, Line *Line);
 
 Line *find_line(TransportDB* tdb, int line_id);
 void sort_by_id(TransportDB* tdb);
 void sort_by_price(TransportDB* tdb);
 
+
 TransportDB *TransportCreate(void)
 {
-   TransportDB *tdb = (TransportDB*)malloc(sizeof(TransportDB));
-   if(tdb == NULL)
-   {
-    return NULL;
-   }
-
+TransportDB *tdb = (TransportDB*)malloc(sizeof(TransportDB));
+    if(tdb == NULL)
+        return NULL;
+    tdb->head = NULL;
+    return tdb;
 }
 
 
 void TransportDestroy(TransportDB *tdb)
 {
-    while(tdb->next!=NULL)
+    if(tdb != NULL)
     {
-        free(tdb)
+        
+        while(tdb->head != NULL)
+        {
+            Line *next_line = tdb->head->next;
+
+            StationsList *station = tdb->head->stations;
+
+            while (station!= NULL)
+            {
+                StationsList *next_station = station->next;
+                free(station->station_name);
+                free(station);
+                station = next_station;
+            }
+            free(tdb->head);
+            tdb->head = next_line;
+            
+        }
+        free(tdb);
     }
+    return;   
+}
+
+
+void clear_stations(Line *curr)
+{
+     while (curr->stations!= NULL)
+    {
+        StationsList *next_station = curr->stations->next;
+        free(curr->stations->station_name);
+        free(curr->stations);
+        curr->stations = next_station;
+    } 
+}
+
+
+TransportResult is_type_valid(Line *new_line, const char *type)
+{
+    if(strcmp(type ,"BUS")==0)
+    {
+        new_line->type = BUS;
+    }
+    else if(strcmp(type ,"METRO")==0)
+    {
+        new_line->type = METRO;
+    }
+    else if(strcmp(type ,"TRAIN")==0)
+    {
+        new_line->type = TRAIN;
+    }
+    else
+    {   
+        free(new_line);
+        return TRANSPORT_INVALID_LINE_TYPE;
+    }
+    return TRANSPORT_SUCCESS;
+}
+
+
+TransportResult is_id_valid(Line *current_line ,Line *new_line, int line_id)
+{
+    while(current_line != NULL)
+    {
+        if(current_line->line_id==line_id)
+        {
+            free(new_line);
+            return TRANSPORT_ALREADY_EXISTS;
+        }
+        current_line=current_line->next;
+    }
+    if(line_id<=0)
+        {
+            free(new_line);
+            return TRANSPORT_INVALID_LINE_NUMBER;
+        }
+    
+    return TRANSPORT_SUCCESS;
+}
+
+
+TransportResult is_price_valid(Line *new_line, float price)
+{
+    if(price<=0)
+    {
+        free(new_line);
+        return TRANSPORT_INVALID_PRICE;
+    }
+    new_line->price=price;
+    return TRANSPORT_SUCCESS;
 }
 
 
 TransportResult TransportAddLine(TransportDB* tdb, const char *type, int line_id, float price)
 {
-
-
-}
-
-
-// TransportDB *add_line(char *tokens[], int count, TransportDB *allLines)
-// {
-//     Line *newNode = malloc(sizeof(Line));
-//     if (newNode == NULL)
-//     {
-//         prog2_report_error_message(TRANSPORT_OUT_OF_MEMORY);
-//         return allLines;
-//     }
-//     newNode->stations_list = NULL;
-//     if (strcmp(tokens[2], "BUS") == 0)
-//         newNode->type = BUS;
-//     else if (strcmp(tokens[2], "TRAIN") == 0)
-//         newNode->type = TRAIN;
-//     else if (strcmp(tokens[2], "METRO") == 0)
-//         newNode->type = METRO;
-//     else{
-//         prog2_report_error_message(TRANSPORT_INVALID_ARGUMENTS);
-//         free(newNode);
-//         return allLines;
-//     }
-//     newNode->line_id = atoi(tokens[3]);
-//     newNode->num_of_stations = atoi(tokens[4]);
-//     newNode->price = atof(tokens[5]);
-//     newNode->next = allLines;
-//     return newNode;
-// }
-
-
-
-    if (newNode == NULL)
+    if(tdb == NULL || type == NULL)
     {
-        prog2_report_error_message(TRANSPORT_OUT_OF_MEMORY);
-        return allLines;
+        return TRANSPORT_NULL_ARGUMENTS;
     }
-    newNode->stations_list = NULL;
-    if (strcmp(tokens[2], "BUS") == 0)
-        newNode->type = BUS;
-    else if (strcmp(tokens[2], "TRAIN") == 0)
-        newNode->type = TRAIN;
-    else if (strcmp(tokens[2], "METRO") == 0)
-        newNode->type = METRO;
-    else{
-        prog2_report_error_message(TRANSPORT_INVALID_ARGUMENTS);
-        free(newNode);
-        return allLines;
-    }
-    newNode->line_id = atoi(tokens[3]);
-    newNode->num_of_stations = atoi(tokens[4]);
-    newNode->price = atof(tokens[5]);
+    
+    Line *new_line=(Line *)malloc(sizeof(Line));
+    if(new_line==NULL)
+        return TRANSPORT_OUT_OF_MEMORY;
+    
+    new_line->stations = NULL;
 
-    newNode->next = allLines;
-    return newNode;
+    TransportResult res = is_type_valid(new_line, type);
+    if(res==TRANSPORT_INVALID_LINE_TYPE)
+        return TRANSPORT_INVALID_LINE_TYPE;
+
+    Line *current_line = tdb->head;
+
+
+    res = is_id_valid(current_line, new_line, line_id);
+    if (res != TRANSPORT_SUCCESS)
+        return res;
+
+     new_line->line_id=line_id;
+
+    res = is_price_valid(new_line, price);
+    if(res==TRANSPORT_INVALID_PRICE)
+        return TRANSPORT_INVALID_PRICE;
+
+    new_line->next = tdb->head;
+    tdb->head= new_line;
+
+    return TRANSPORT_SUCCESS;
 }
 
-void remove_line(char *tokens[], int count, Line *allLines)
 
 TransportResult TransportRemoveLine(TransportDB* tdb, int line_id)
 {
-    
-}
+    if (tdb == NULL)
+    {
+        return TRANSPORT_NULL_ARGUMENTS;
+    }
+
+    if (line_id <= 0)
+    {
+        return TRANSPORT_INVALID_LINE_NUMBER;
+    }
+
+    if (tdb->head == NULL)
+        return TRANSPORT_DOESNT_EXIST;
 
 
-void add_station_to_line(char *tokens[], int count, Line *allLines)
+    Line *curr = tdb->head->next;
+    Line *prev = tdb->head;
+    if (prev->line_id == line_id)
+    {
+        clear_stations(prev);
+        tdb->head = tdb->head->next;
+        free(prev);
+        return TRANSPORT_SUCCESS;
+    }
 
-{
-    
+    while (curr != NULL)
+    {
+        if (curr->line_id == line_id)
+        {
+            clear_stations(curr);
+            prev->next = curr->next;
+            free(curr);
+            return TRANSPORT_SUCCESS;
+        }
+
+        prev = curr;
+        curr = curr->next;
+    }
+    return TRANSPORT_DOESNT_EXIST;
 }
 
 
@@ -347,6 +437,7 @@ void sort_by_id(TransportDB* tdb)
     return;
 }
 
+
 TransportResult TransportReportLines(TransportDB* tdb, const char *type) 
 {
     if (tdb == NULL || type == NULL)
@@ -432,6 +523,7 @@ TransportResult TransportReportLines(TransportDB* tdb, const char *type)
         return TRANSPORT_SUCCESS;        
     }
 }
+
 
 TransportResult TransportReportStations(TransportDB* tdb, int line_id) 
 {
@@ -536,6 +628,7 @@ void sort_by_price(TransportDB* tdb)
     return;
 }
 
+
 TransportResult TransportReportDirections(TransportDB* tdb, const char *from, const char *to) 
 {
     if (tdb == NULL || from == NULL || to == NULL)
@@ -554,6 +647,7 @@ TransportResult TransportReportDirections(TransportDB* tdb, const char *from, co
     StationsList *curr_sta;
     StationsList *after_from_sta;
     StationsList *count_sta;
+    StationsList *last_sta = NULL;
     int num_stations = 0;
     int count = 0;
     int found_this_line = 0;
@@ -583,13 +677,14 @@ TransportResult TransportReportDirections(TransportDB* tdb, const char *from, co
 
                         while (count_sta != NULL)
                         {
+                            last_sta = count_sta;
                             num_stations++;
                             count_sta = count_sta->next;
-                        }                     
+                        }                  
 
                         prog2_report_line(curr_line->line_id, curr_line->type, num_stations, curr_line->price);
-                        prog2_report_station(from);
-                        prog2_report_station(to);
+                        prog2_report_station(curr_line->stations->station_name);
+                        prog2_report_station(last_sta->station_name);
 
                         count++;
                         found_this_line = 1;
