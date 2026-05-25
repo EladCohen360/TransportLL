@@ -599,7 +599,7 @@ void sort_by_price(TransportDB* tdb)
         
         while (cmp_line != NULL)
         {
-            if (cmp_line->price < curr_line->price)
+            if (cmp_line->price <= curr_line->price)
             {
 
                 temp_line.line_id = curr_line->line_id;
